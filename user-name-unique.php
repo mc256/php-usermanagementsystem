@@ -34,4 +34,4 @@ if (isset($_GET[__post_interface__])) {
 	echo __return_error__;
 }
 
-?>“”
+?>
