@@ -3,10 +3,10 @@
 define("__db_username__", 		"testaccount");
 define("__db_password__", 		"D4S5L4q9fuLTLexf");
 define("__db_host__", 			"localhost");
-define("__db_name__", 		"openstaple_test");
+define("__db_name__",	 		"openstaple_test");
 
-define("__db_charset__"), "utf8");
-define("__db_sort_charset__"), "utf8_general_ci");
+define("__db_charset__", 		"utf8");
+define("__db_sort_charset__", 	"utf8_general_ci");
 
 function create_db_connection(){
 
@@ -25,7 +25,11 @@ function destory_db_connection($handle){
 
 }
 
+function pre_str($string){
 
+	return addslashes($string);
+
+}
 
 
 ?>
