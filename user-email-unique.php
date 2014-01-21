@@ -18,17 +18,12 @@ define("__return_error__",			3);				//不符合要求时的返回值
 if (isset($_GET[__post_interface__])) {
 	if (preg_match(__name_filter__,$_GET[__post_interface__])) {
 		sleep(__reply_delay__);
-		require("database-connections.php");
-		$connection	=	create_db_connection();
-		$sql		=	"SELECT `user_email` FROM `mc_users` WHERE `user_email`='".$_GET[__post_interface__]."' LIMIT 1";
-		$result		=	mysql_query($sql);
-		$row		=	mysql_fetch_array($result);
-		if (isset($row["user_email"])) {
-			    echo __return_not_unique__;
-		} else {
+		require("functions.php");
+		if (email_unique($_GET[__post_interface__])) {
+			echo __return_not_unique__;
+		}else{
 			echo __return_unique__;
 		}
-		destory_db_connection($connection);	
 	}else{
 		echo __return_error__;
 	}
