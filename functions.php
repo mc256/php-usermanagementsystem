@@ -13,8 +13,14 @@ define("__db_sort_charset__", 	"utf8_general_ci");				//整理
 //[安全密匙]
 define("__secret_A__",			"i*(&d5f4e6w&(5yd");			//用于加密网站密码,一旦设定请勿随意更改
 define("__secret_B__",			"as4d6e6i#%111>ad");			//用于加密网站密码,一旦设定请勿随意更改
+define("__secret_C__",			"ags4wetigiow4d!d");			//用于COOKIE用户登录加密（长时间）
+define("__secret_D__",			"apoigln89GKUWdfd");			//用于COOKIE用户登录加密（短时间）
+define("__secret_E__",			"SADQEiglSUWdGDDd");			//用于COOKIE用户登录加密（Cookie 名称）
+define("__cookie_prefix__",		"mc_key_");						//用于COOKIE前缀
 //
-//
+//[有效时间]
+define("__keeplogin_long__",	1814400);						//记住密码的最长时间 3周
+define("__keeplogin_short__", 	3600);							//用户活跃登录最长时间 1小时
 //
 //============================================
 function create_db_connection(){
@@ -99,6 +105,40 @@ function confirm_user($username,$password){
 	}
 	destory_db_connection($connection);
 	return $result;
+
+}
+
+
+function update_login_status($username,$password,$method){
+	$time		=	time();
+	$connection	=	create_db_connection();
+
+	if ($method) {
+		$validate	=	$time+__keeplogin_long__;
+		$cookie_key	=	md5(prepare_password($password).$time.__secret_C__);
+	} else {
+		$validate	=	$time+__keeplogin_short__;
+		$cookie_key	=	md5(prepare_password($password).$time.__secret_D__);
+	}
+
+	$sql			=	"UPDATE `mc_users` SET `user_validate` = '".$validate."' WHERE `user_name`='".$username."'";
+	$cookie_name	=	__cookie_prefix__.substr(md5($username.__secret_E__), 0, 8);
+	$cookie_title	=	__cookie_prefix__."master";
+	$cookie_value	=	$method."|".$cookie_key;
+
+	$query			=	mysql_query($sql);
+	$result			=	mysql_affected_rows();
+
+	destory_db_connection($connection);
+	setcookie($cookie_name, $cookie_value, $validate);
+	setcookie($cookie_title, $username, $validate);
+
+	return $result;
+
+}
+
+function confirm_rights(){
+
 
 }
 
