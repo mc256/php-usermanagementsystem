@@ -22,6 +22,10 @@ define("__cookie_prefix__",		"mc_key_");						//用于COOKIE前缀
 define("__keeplogin_long__",	1814400);						//记住密码的最长时间 3周
 define("__keeplogin_short__", 	3600);							//用户活跃登录最长时间 1小时
 //
+//[COOKIE输入保护]
+define("__cookie_name_filter__", 	"/^[\x{4e00}-\x{9fa5}a-zA-Z0-9_\.]{5,20}$/u");	//过滤查询的字符串
+define("__cookie_data_filter__", 	"/^(1|0)\|[0-9a-f]{32}$/");	//过滤查询的字符串
+//
 //============================================
 function create_db_connection(){
 
@@ -138,8 +142,17 @@ function update_login_status($username,$password,$method){
 }
 
 function confirm_rights(){
-
-
+	$cookie_title	=	__cookie_prefix__."master";
+	if (isset($_COOKIE[$cookie_title])&&preg_match(__cookie_name_filter__,$_COOKIE[$cookie_title])){//验证第一个COOKIE，确定用户名
+		$cookie_name	=	__cookie_prefix__.substr(md5($_COOKIE[$cookie_title].__secret_E__), 0, 8);
+		if (isset($_COOKIE[$cookie_name])&&preg_match(__cookie_data_filter__, $_COOKIE[$cookie_name])){//获取第二个COOKIE，确定用户信息
+			return true;//未完工
+		} else {
+			return false;
+		}
+	}else{
+		return false;
+	}
 }
 
 
