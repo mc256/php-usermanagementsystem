@@ -143,10 +143,17 @@ function update_login_status($username,$password,$method){
 
 function confirm_rights(){
 	$cookie_title	=	__cookie_prefix__."master";
-	if (isset($_COOKIE[$cookie_title])&&preg_match(__cookie_name_filter__,$_COOKIE[$cookie_title])){//验证第一个COOKIE，确定用户名
+	if (isset($_COOKIE[$cookie_title])&&preg_match(__cookie_name_filter__,$_COOKIE[$cookie_title])){		//验证第一个COOKIE，确定用户名
 		$cookie_name	=	__cookie_prefix__.substr(md5($_COOKIE[$cookie_title].__secret_E__), 0, 8);
-		if (isset($_COOKIE[$cookie_name])&&preg_match(__cookie_data_filter__, $_COOKIE[$cookie_name])){//获取第二个COOKIE，确定用户信息
-			return true;//未完工
+		if (isset($_COOKIE[$cookie_name])&&preg_match(__cookie_data_filter__, $_COOKIE[$cookie_name])){		//获取第二个COOKIE，确定用户信息
+			list($method, $cookie_key)	=	explode("|", $_COOKIE[$cookie_name]);
+			#读取数据库
+			if ($method) {
+				# code...记住
+			} else {
+				# code...不记住(更新数据库,更新Cookie)
+			}
+			
 		} else {
 			return false;
 		}
